@@ -1,7 +1,7 @@
 # Python starter
 
 The objective of this project is to have a starting point for future server side
-python project
+python projects
 
 It includes:
 
