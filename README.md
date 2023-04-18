@@ -14,3 +14,16 @@ It includes:
 - Type checking
 - Basic Dockerfile to build relative image
 - Configuration: pydantic + .env
+
+## After cloning from template
+
+- Modify pyproject replacing author and project name
+- Rename folders and imports accordingly
+- Change database drivers and migration file according to your needs (currently
+  the `env.py` for the migrations removes the `+aiosqlite` driver to make it
+  work synchronously)
+- Adapt sqlalchemy models to your need
+- Delete current migrations under `migrations/versions/`
+- `make generate-migrations name=${migration name}`
+- `make install`
+- `make migrate-and-run`

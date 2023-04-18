@@ -1,4 +1,5 @@
 from logging.config import fileConfig
+import re
 from pystarter.database import Base
 
 from sqlalchemy import engine_from_config
@@ -41,7 +42,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = get_config().database_url
+    url = remove_driver(get_config().database_url)
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -62,7 +63,7 @@ def run_migrations_online() -> None:
     """
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {})
-        | {"sqlalchemy.url": get_config().database_url.replace("+aiosqlite", "")},
+        | {"sqlalchemy.url": remove_driver(get_config().database_url)},
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
@@ -78,3 +79,7 @@ if context.is_offline_mode():
     run_migrations_offline()
 else:
     run_migrations_online()
+
+
+def remove_driver(url: str) -> str:
+    return re.sub(r"\+[^:]+", "", url)
