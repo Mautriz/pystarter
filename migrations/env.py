@@ -42,7 +42,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = remove_driver(get_config().database_url)
+    url = _remove_driver(get_config().database_url)
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -63,7 +63,7 @@ def run_migrations_online() -> None:
     """
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {})
-        | {"sqlalchemy.url": remove_driver(get_config().database_url)},
+        | {"sqlalchemy.url": _remove_driver(get_config().database_url)},
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
@@ -75,11 +75,11 @@ def run_migrations_online() -> None:
             context.run_migrations()
 
 
+def _remove_driver(url: str) -> str:
+    return re.sub(r"\+[^:]+", "", url)
+
+
 if context.is_offline_mode():
     run_migrations_offline()
 else:
     run_migrations_online()
-
-
-def remove_driver(url: str) -> str:
-    return re.sub(r"\+[^:]+", "", url)
